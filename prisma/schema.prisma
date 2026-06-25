@@ -14,7 +14,7 @@ model Memory {
   imageUrl    String?
   createdAt   DateTime @default(now())
   images Image[] @relation("MemoryImages")
-
+}
 model Image {
   id         Int      @id @default(autoincrement())
   url        String   @unique

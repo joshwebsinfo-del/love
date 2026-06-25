@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: love-journey
+    env: node
+    buildCommand: "npm install && npm run prisma:generate && npm run build"
+    startCommand: "npm start"
+    envVars:
+      - key: DATABASE_URL
+        fromService:
+          name: love-journey-db
+          type: postgres
+          envVar: DATABASE_URL
+    healthCheckPath: "/"
+    autoDeploy: true
+    staticPublishPath: ".next"
+    port: 6945
+  - type: postgres
+    name: love-journey-db
+    plan: free
+    databaseName: love_journey
+    user: love_user
+    password: love_pass

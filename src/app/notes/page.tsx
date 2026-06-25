@@ -13,7 +13,7 @@ export default function NotesPage() {
   const item = {
     hidden: { opacity: 0, scale: 0.9, y: 20 },
     show: { opacity: 1, scale: 1, y: 0, transition: { type: "spring" } }
-  };
+  } as const;
 
   return (
     <div className="w-full max-w-4xl mx-auto z-10 relative">

@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import { Heart, Clock, Image as ImageIcon, Sparkles, MapPin, CalendarHeart } from "lucide-react";
 
 export default function LandingPage() {
@@ -15,12 +15,12 @@ export default function LandingPage() {
         delayChildren: 0.2
       }
     }
-  };
+  } as const;
 
   const item = {
     hidden: { opacity: 0, y: 30, scale: 0.95 },
     show: { opacity: 1, y: 0, scale: 1, transition: { type: "spring", bounce: 0.4, duration: 0.8 } }
-  };
+  } as const;
 
   return (
     <div className="min-h-full text-white font-sans flex flex-col max-w-7xl mx-auto w-full relative z-10">

@@ -8,7 +8,8 @@ export default function Particles() {
 
   useEffect(() => {
     // Generate random particles only on the client to avoid hydration mismatch
-    const generated = Array.from({ length: 40 }).map((_, i) => ({
+    // Reduced from 40 to 20 for mobile performance
+    const generated = Array.from({ length: 20 }).map((_, i) => ({
       id: i,
       x: Math.random() * 100, // percentage vw
       y: Math.random() * 100, // percentage vh
@@ -23,7 +24,7 @@ export default function Particles() {
       {particles.map((p) => (
         <motion.div
           key={p.id}
-          className="absolute rounded-full bg-rose-200/40 blur-[1px]"
+          className="absolute rounded-full bg-rose-200/40 blur-[1px] transform-gpu"
           style={{
             width: p.size,
             height: p.size,

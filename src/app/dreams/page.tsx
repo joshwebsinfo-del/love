@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import { dreams } from "@/lib/data";
 import { CheckCircle2, Circle } from "lucide-react";
 
@@ -9,11 +9,11 @@ export default function DreamsPage() {
   const container = {
     hidden: { opacity: 0 },
     show: { opacity: 1, transition: { staggerChildren: 0.1 } }
-  };
+  } as const;
   const item = {
     hidden: { opacity: 0, y: 20 },
     show: { opacity: 1, y: 0, transition: { type: "spring" } }
-  };
+  } as const;
 
   return (
     <div className="w-full max-w-4xl mx-auto z-10 relative">

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import { notes } from "@/lib/data";
 import { Heart } from "lucide-react";
 
@@ -9,7 +9,7 @@ export default function NotesPage() {
   const container = {
     hidden: { opacity: 0 },
     show: { opacity: 1, transition: { staggerChildren: 0.1 } }
-  };
+  } as const;
   const item = {
     hidden: { opacity: 0, scale: 0.9, y: 20 },
     show: { opacity: 1, scale: 1, y: 0, transition: { type: "spring" } }

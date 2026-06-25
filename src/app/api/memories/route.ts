@@ -19,12 +19,12 @@ export async function GET(request: Request) {
 // Expected JSON body: { content: string }
 export async function POST(request: Request) {
   try {
-    const { content } = await request.json();
-    if (!content) {
-      return new NextResponse('Missing content', { status: 400 });
+    const { title, description, imageUrl } = await request.json();
+    if (!title || !description) {
+      return new NextResponse('Missing title or description', { status: 400 });
     }
     const memory = await prisma.memory.create({
-      data: { content },
+      data: { title, description, imageUrl },
     });
     return NextResponse.json(memory, { status: 201 });
   } catch (error) {

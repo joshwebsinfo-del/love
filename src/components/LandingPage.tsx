@@ -14,7 +14,11 @@ interface LandingPageProps {
 export default function LandingPage({ initialNotes = [], initialMemories = [], initialTimeline = [] }: LandingPageProps) {
   const [latestNote, setLatestNote] = useState<any>(initialNotes[0] || null);
   const [allMemories, setAllMemories] = useState<any[]>(initialMemories || []);
-  const [memoryIndex, setMemoryIndex] = useState(0);
+  const imageMemories = allMemories.filter(m => m.type !== 'video');
+  const videoMemories = allMemories.filter(m => m.type === 'video');
+
+  const [imageIndex, setImageIndex] = useState(0);
+  const [videoIndex, setVideoIndex] = useState(0);
   const [latestTimeline, setLatestTimeline] = useState<any>(initialTimeline[initialTimeline.length - 1] || null);
 
   useEffect(() => {
@@ -33,14 +37,23 @@ export default function LandingPage({ initialNotes = [], initialMemories = [], i
   }, [initialNotes.length, initialMemories.length, initialTimeline.length]);
 
   useEffect(() => {
-    if (allMemories.length <= 1) return;
+    if (imageMemories.length <= 1) return;
     const interval = setInterval(() => {
-      setMemoryIndex((prev) => (prev + 1) % allMemories.length);
-    }, 5000); // switch every 5 seconds
+      setImageIndex((prev) => (prev + 1) % imageMemories.length);
+    }, 5000); 
     return () => clearInterval(interval);
-  }, [allMemories]);
+  }, [imageMemories.length]);
 
-  const latestMemory = allMemories[memoryIndex] || null;
+  useEffect(() => {
+    if (videoMemories.length <= 1) return;
+    const interval = setInterval(() => {
+      setVideoIndex((prev) => (prev + 1) % videoMemories.length);
+    }, 6000); 
+    return () => clearInterval(interval);
+  }, [videoMemories.length]);
+
+  const latestMemory = imageMemories[imageIndex] || null;
+  const latestVideo = videoMemories[videoIndex] || null;
 
   const container = {
     hidden: { opacity: 0 },
@@ -156,27 +169,11 @@ export default function LandingPage({ initialNotes = [], initialMemories = [], i
                   transition={{ duration: 1 }}
                   className="absolute inset-0"
                 >
-                  {latestMemory?.type === "video" && latestMemory.videoUrl ? (
-                    <video 
-                      src={latestMemory.videoUrl} 
-                      muted 
-                      loop 
-                      playsInline
-                      onMouseEnter={(e) => (e.target as HTMLVideoElement).play()}
-                      onMouseLeave={(e) => {
-                        const v = e.target as HTMLVideoElement;
-                        v.pause();
-                        v.currentTime = 0;
-                      }}
-                      className="w-full h-full object-cover opacity-90 mix-blend-overlay group-hover:scale-105 transition-transform duration-1000 transform-gpu"
-                    />
-                  ) : (
                     <img 
                       src={latestMemory ? latestMemory.imageUrl : "https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&w=800&q=80"} 
                       alt="Memory" 
                       className="w-full h-full object-cover opacity-90 mix-blend-overlay group-hover:scale-105 transition-transform duration-1000 transform-gpu"
                     />
-                  )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-8 pointer-events-none">
                     <h3 className="text-2xl font-bold font-[family-name:var(--font-playfair)]">{latestMemory ? latestMemory.title : "Summer in Paris"}</h3>
                     <p className="text-white/70 flex items-center gap-2 mt-2">
@@ -219,6 +216,49 @@ export default function LandingPage({ initialNotes = [], initialMemories = [], i
             </Link>
           </div>
         </motion.div>
+
+        {/* Widget: Featured Video */}
+        <Link href="/memories" className="col-span-1 lg:col-span-2 row-span-1">
+          <motion.div variants={item} className="h-full p-2 rounded-[2.5rem] bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl relative overflow-hidden group hover:scale-[1.02] transition-transform cursor-pointer">
+            <div className="absolute top-6 left-6 z-20 flex items-center gap-2 px-4 py-2 bg-black/40 backdrop-blur-md rounded-full border border-white/10">
+              <Sparkles className="w-4 h-4 text-white" />
+              <span className="text-xs font-semibold tracking-wide">Featured Video</span>
+            </div>
+            <div className="w-full h-full rounded-[2rem] overflow-hidden relative">
+              <div className="absolute inset-0 bg-slate-800 animate-pulse" />
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={latestVideo ? latestVideo.id : "empty"}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 1 }}
+                  className="absolute inset-0"
+                >
+                  <video 
+                    src={latestVideo ? latestVideo.videoUrl : "https://www.w3schools.com/html/mov_bbb.mp4"} 
+                    muted 
+                    loop 
+                    playsInline
+                    onMouseEnter={(e) => (e.target as HTMLVideoElement).play()}
+                    onMouseLeave={(e) => {
+                      const v = e.target as HTMLVideoElement;
+                      v.pause();
+                      v.currentTime = 0;
+                    }}
+                    className="w-full h-full object-cover opacity-90 mix-blend-overlay group-hover:scale-105 transition-transform duration-1000 transform-gpu"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-8 pointer-events-none">
+                    <h3 className="text-2xl font-bold font-[family-name:var(--font-playfair)]">{latestVideo ? latestVideo.title : "Movie Night"}</h3>
+                    <p className="text-white/70 flex items-center gap-2 mt-2">
+                      <MapPin className="w-4 h-4" /> {latestVideo ? latestVideo.description : "Cozy memories"}
+                    </p>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          </motion.div>
+        </Link>
 
       </motion.div>
     </div>

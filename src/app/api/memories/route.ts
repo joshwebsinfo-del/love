@@ -7,6 +7,7 @@ export async function GET(request: Request) {
     const memories = await prisma.memory.findMany({
       include: { images: true },
       orderBy: { createdAt: 'desc' },
+      take: 20, // Limit API payload to prevent 502 Gateway timeout from huge base64 strings
     });
     return NextResponse.json(memories);
   } catch (error) {

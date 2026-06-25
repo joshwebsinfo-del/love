@@ -5,23 +5,32 @@ import Link from "next/link";
 import { motion, Variants, AnimatePresence } from "framer-motion";
 import { Heart, Clock, Image as ImageIcon, Sparkles, MapPin, CalendarHeart } from "lucide-react";
 
-export default function LandingPage() {
-  const [latestNote, setLatestNote] = useState<any>(null);
-  const [allMemories, setAllMemories] = useState<any[]>([]);
+interface LandingPageProps {
+  initialNotes?: any[];
+  initialMemories?: any[];
+  initialTimeline?: any[];
+}
+
+export default function LandingPage({ initialNotes = [], initialMemories = [], initialTimeline = [] }: LandingPageProps) {
+  const [latestNote, setLatestNote] = useState<any>(initialNotes[0] || null);
+  const [allMemories, setAllMemories] = useState<any[]>(initialMemories || []);
   const [memoryIndex, setMemoryIndex] = useState(0);
-  const [latestTimeline, setLatestTimeline] = useState<any>(null);
+  const [latestTimeline, setLatestTimeline] = useState<any>(initialTimeline[initialTimeline.length - 1] || null);
 
   useEffect(() => {
-    Promise.all([
-      fetch('/api/notes').then(res => res.json()).catch(() => []),
-      fetch('/api/memories').then(res => res.json()).catch(() => []),
-      fetch('/api/timeline').then(res => res.json()).catch(() => [])
-    ]).then(([notes, memories, timeline]) => {
-      if (notes.length > 0) setLatestNote(notes[0]);
-      if (memories.length > 0) setAllMemories(memories);
-      if (timeline.length > 0) setLatestTimeline(timeline[timeline.length - 1]);
-    });
-  }, []);
+    // If props are empty (e.g., during client-side navigation without data), fallback to fetch
+    if (!initialNotes.length && !initialMemories.length && !initialTimeline.length) {
+      Promise.all([
+        fetch('/api/notes').then(res => res.json()).catch(() => []),
+        fetch('/api/memories').then(res => res.json()).catch(() => []),
+        fetch('/api/timeline').then(res => res.json()).catch(() => [])
+      ]).then(([notes, memories, timeline]) => {
+        if (notes.length > 0) setLatestNote(notes[0]);
+        if (memories.length > 0) setAllMemories(memories);
+        if (timeline.length > 0) setLatestTimeline(timeline[timeline.length - 1]);
+      });
+    }
+  }, [initialNotes.length, initialMemories.length, initialTimeline.length]);
 
   useEffect(() => {
     if (allMemories.length <= 1) return;

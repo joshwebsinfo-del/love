@@ -22,7 +22,7 @@ export default function LandingPage() {
     show: { opacity: 1, y: 0, scale: 1, transition: { type: "spring", bounce: 0.4, duration: 0.8 } }
   } as const;
 
-  const startDate = new Date("2026-10-28");
+  const startDate = new Date("2024-10-28");
   const today = new Date();
   const diffDays = today < startDate ? 0 : Math.ceil((today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
 
@@ -81,7 +81,7 @@ export default function LandingPage() {
               <p className="text-6xl md:text-7xl font-bold tracking-tighter drop-shadow-lg font-[family-name:var(--font-playfair)]">
                 {diffDays.toLocaleString()} <span className="text-2xl md:text-3xl text-white/70 tracking-normal font-sans font-light">days</span>
               </p>
-              <p className="text-white/60 mt-2 ml-1">Since October 28, 2026</p>
+              <p className="text-white/60 mt-2 ml-1">Since October 28, 2024</p>
             </div>
           </div>
         </motion.div>

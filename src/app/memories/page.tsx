@@ -153,10 +153,13 @@ export default function MemoriesPage() {
                   type="url" 
                   value={imageUrl}
                   onChange={(e) => setImageUrl(e.target.value)}
-                  placeholder="https://images.unsplash.com/..." 
+                  placeholder="https://example.com/photo.jpg" 
+                  pattern=".*\.(jpg|jpeg)(\?.*)?$"
+                  title="Please provide a URL ending in .jpg or .jpeg"
                   className="w-full bg-white/5 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-rose-400"
                   required 
                 />
+                <p className="text-white/40 text-xs mt-1">URL must end with .jpg or .jpeg</p>
               </div>
               <button 
                 type="submit" 

@@ -44,6 +44,17 @@ export default function MemoriesPage() {
     fetchMemories();
   }, []);
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImageUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleAddMemory = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title || !description || !imageUrl) return;
@@ -148,18 +159,20 @@ export default function MemoriesPage() {
                 />
               </div>
               <div>
-                <label className="block text-white/80 text-sm mb-1">Image URL</label>
+                <label className="block text-white/80 text-sm mb-1">Image Upload (JPG Only)</label>
                 <input 
-                  type="url" 
-                  value={imageUrl}
-                  onChange={(e) => setImageUrl(e.target.value)}
-                  placeholder="https://example.com/photo.jpg" 
-                  pattern=".*\.(jpg|jpeg)(\?.*)?$"
-                  title="Please provide a URL ending in .jpg or .jpeg"
-                  className="w-full bg-white/5 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-rose-400"
+                  type="file" 
+                  accept=".jpg,.jpeg,image/jpeg"
+                  onChange={handleImageChange}
+                  className="w-full bg-white/5 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-rose-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-rose-500 file:text-white hover:file:bg-rose-600"
                   required 
                 />
-                <p className="text-white/40 text-xs mt-1">URL must end with .jpg or .jpeg</p>
+                {imageUrl && (
+                  <div className="mt-4">
+                    <p className="text-white/60 text-xs mb-2">Preview:</p>
+                    <img src={imageUrl} alt="Preview" className="h-32 object-cover rounded-xl border border-white/20" />
+                  </div>
+                )}
               </div>
               <button 
                 type="submit" 

@@ -1,11 +1,28 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, Variants } from "framer-motion";
 import { Heart, Clock, Image as ImageIcon, Sparkles, MapPin, CalendarHeart } from "lucide-react";
 
 export default function LandingPage() {
+  const [latestNote, setLatestNote] = useState<any>(null);
+  const [latestMemory, setLatestMemory] = useState<any>(null);
+  const [latestTimeline, setLatestTimeline] = useState<any>(null);
+
+  useEffect(() => {
+    // Fetch latest data
+    Promise.all([
+      fetch('/api/notes').then(res => res.json()).catch(() => []),
+      fetch('/api/memories').then(res => res.json()).catch(() => []),
+      fetch('/api/timeline').then(res => res.json()).catch(() => [])
+    ]).then(([notes, memories, timeline]) => {
+      if (notes.length > 0) setLatestNote(notes[0]);
+      if (memories.length > 0) setLatestMemory(memories[0]);
+      if (timeline.length > 0) setLatestTimeline(timeline[timeline.length - 1]); // last event or next event depending on order
+    });
+  }, []);
+
   const container = {
     hidden: { opacity: 0 },
     show: {
@@ -92,11 +109,11 @@ export default function LandingPage() {
             <Heart className="absolute -right-10 -bottom-10 w-48 h-48 text-rose-500/10 transform -rotate-12 group-hover:scale-110 transition-transform duration-700" />
             <div className="relative z-10">
               <p className="text-2xl font-[family-name:var(--font-playfair)] italic leading-relaxed text-rose-50 drop-shadow-md">
-                &quot;In all the world, there is no heart for me like yours...&quot;
+                &quot;{latestNote ? latestNote.text : "In all the world, there is no heart for me like yours..."}&quot;
               </p>
               <div className="mt-4 flex items-center gap-2">
                 <div className="w-8 h-px bg-rose-400/50" />
-                <span className="text-sm font-semibold tracking-widest uppercase text-rose-300">Latest Note</span>
+                <span className="text-sm font-semibold tracking-widest uppercase text-rose-300">Latest Note {latestNote ? `from ${latestNote.author}` : ''}</span>
               </div>
             </div>
           </motion.div>
@@ -112,14 +129,14 @@ export default function LandingPage() {
             <div className="w-full h-full rounded-[2rem] overflow-hidden relative">
               <div className="absolute inset-0 bg-slate-800 animate-pulse" />
               <img 
-                src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&w=800&q=80" 
+                src={latestMemory ? latestMemory.imageUrl : "https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&w=800&q=80"} 
                 alt="Memory" 
                 className="w-full h-full object-cover opacity-90 mix-blend-overlay group-hover:scale-105 transition-transform duration-1000"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-8">
-                <h3 className="text-2xl font-bold font-[family-name:var(--font-playfair)]">Summer in Paris</h3>
+                <h3 className="text-2xl font-bold font-[family-name:var(--font-playfair)]">{latestMemory ? latestMemory.title : "Summer in Paris"}</h3>
                 <p className="text-white/70 flex items-center gap-2 mt-2">
-                  <MapPin className="w-4 h-4" /> France
+                  <MapPin className="w-4 h-4" /> {latestMemory ? latestMemory.description : "France"}
                 </p>
               </div>
             </div>
@@ -133,9 +150,9 @@ export default function LandingPage() {
               <CalendarHeart className="w-6 h-6 text-rose-300" />
             </div>
             <div>
-              <h4 className="text-sm uppercase tracking-widest text-white/60 font-semibold mb-2">Upcoming</h4>
-              <p className="text-2xl font-bold font-[family-name:var(--font-playfair)] text-white">Our Anniversary</p>
-              <p className="text-rose-300 font-medium mt-1">In 61 days</p>
+              <h4 className="text-sm uppercase tracking-widest text-white/60 font-semibold mb-2">Milestone</h4>
+              <p className="text-2xl font-bold font-[family-name:var(--font-playfair)] text-white">{latestTimeline ? latestTimeline.title : "Our Anniversary"}</p>
+              <p className="text-rose-300 font-medium mt-1">{latestTimeline ? latestTimeline.date : "In 61 days"}</p>
             </div>
           </motion.div>
         </Link>

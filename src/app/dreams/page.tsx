@@ -43,6 +43,27 @@ export default function DreamsPage() {
     fetchDreams();
   }, []);
 
+  const handleToggleDream = async (id: number, currentStatus: boolean) => {
+    try {
+      // Optimistic UI update
+      setDreams(dreams.map(d => d.id === id ? { ...d, completed: !currentStatus } : d));
+      
+      const res = await fetch(`/api/dreams/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ completed: !currentStatus })
+      });
+      if (!res.ok) {
+        // Revert on failure
+        setDreams(dreams.map(d => d.id === id ? { ...d, completed: currentStatus } : d));
+      }
+    } catch (e) {
+      console.error(e);
+      // Revert on failure
+      setDreams(dreams.map(d => d.id === id ? { ...d, completed: currentStatus } : d));
+    }
+  };
+
   const handleAddDream = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title || !category) return;
@@ -83,6 +104,7 @@ export default function DreamsPage() {
             <motion.div 
               key={dream.id} 
               variants={item}
+              onClick={() => handleToggleDream(dream.id, dream.completed)}
               className="flex items-center gap-4 p-6 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg hover:bg-white/15 transition-colors cursor-pointer group"
             >
               <div className="text-rose-400 group-hover:scale-110 transition-transform">

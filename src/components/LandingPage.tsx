@@ -128,12 +128,28 @@ export default function LandingPage() {
             </div>
             <div className="w-full h-full rounded-[2rem] overflow-hidden relative">
               <div className="absolute inset-0 bg-slate-800 animate-pulse" />
-              <img 
-                src={latestMemory ? latestMemory.imageUrl : "https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&w=800&q=80"} 
-                alt="Memory" 
-                className="w-full h-full object-cover opacity-90 mix-blend-overlay group-hover:scale-105 transition-transform duration-1000"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-8">
+              {latestMemory?.type === "video" && latestMemory.videoUrl ? (
+                <video 
+                  src={latestMemory.videoUrl} 
+                  muted 
+                  loop 
+                  playsInline
+                  onMouseEnter={(e) => (e.target as HTMLVideoElement).play()}
+                  onMouseLeave={(e) => {
+                    const v = e.target as HTMLVideoElement;
+                    v.pause();
+                    v.currentTime = 0;
+                  }}
+                  className="w-full h-full object-cover opacity-90 mix-blend-overlay group-hover:scale-105 transition-transform duration-1000"
+                />
+              ) : (
+                <img 
+                  src={latestMemory ? latestMemory.imageUrl : "https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&w=800&q=80"} 
+                  alt="Memory" 
+                  className="w-full h-full object-cover opacity-90 mix-blend-overlay group-hover:scale-105 transition-transform duration-1000"
+                />
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-8 pointer-events-none">
                 <h3 className="text-2xl font-bold font-[family-name:var(--font-playfair)]">{latestMemory ? latestMemory.title : "Summer in Paris"}</h3>
                 <p className="text-white/70 flex items-center gap-2 mt-2">
                   <MapPin className="w-4 h-4" /> {latestMemory ? latestMemory.description : "France"}

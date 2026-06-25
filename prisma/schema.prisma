@@ -11,7 +11,9 @@ model Memory {
   id          Int      @id @default(autoincrement())
   title       String
   description String?
+  type        String   @default("image") // "image" or "video"
   imageUrl    String?
+  videoUrl    String?
   createdAt   DateTime @default(now())
   images Image[] @relation("MemoryImages")
 }

@@ -22,6 +22,10 @@ export default function LandingPage() {
     show: { opacity: 1, y: 0, scale: 1, transition: { type: "spring", bounce: 0.4, duration: 0.8 } }
   } as const;
 
+  const startDate = new Date("2026-10-28");
+  const today = new Date();
+  const diffDays = today < startDate ? 0 : Math.ceil((today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+
   return (
     <div className="min-h-full text-white font-sans flex flex-col max-w-7xl mx-auto w-full relative z-10">
       
@@ -50,7 +54,9 @@ export default function LandingPage() {
         
         <div className="text-right hidden md:block">
           <p className="text-white/80 text-lg drop-shadow-md">Today is a beautiful day</p>
-          <p className="text-2xl font-bold drop-shadow-lg font-[family-name:var(--font-playfair)]">August 24th</p>
+          <p className="text-2xl font-bold drop-shadow-lg font-[family-name:var(--font-playfair)]">
+            {today.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}
+          </p>
         </div>
       </motion.div>
 
@@ -73,9 +79,9 @@ export default function LandingPage() {
             </div>
             <div>
               <p className="text-6xl md:text-7xl font-bold tracking-tighter drop-shadow-lg font-[family-name:var(--font-playfair)]">
-                1,245 <span className="text-2xl md:text-3xl text-white/70 tracking-normal font-sans font-light">days</span>
+                {diffDays.toLocaleString()} <span className="text-2xl md:text-3xl text-white/70 tracking-normal font-sans font-light">days</span>
               </p>
-              <p className="text-white/60 mt-2 ml-1">Since October 12, 2021</p>
+              <p className="text-white/60 mt-2 ml-1">Since October 28, 2026</p>
             </div>
           </div>
         </motion.div>

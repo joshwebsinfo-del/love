@@ -22,19 +22,16 @@ export default function LandingPage({ initialNotes = [], initialMemories = [], i
   const [latestTimeline, setLatestTimeline] = useState<any>(initialTimeline[initialTimeline.length - 1] || null);
 
   useEffect(() => {
-    // If props are empty (e.g., during client-side navigation without data), fallback to fetch
-    if (!initialNotes.length && !initialMemories.length && !initialTimeline.length) {
-      Promise.all([
-        fetch('/api/notes').then(res => res.json()).catch(() => []),
-        fetch('/api/memories').then(res => res.json()).catch(() => []),
-        fetch('/api/timeline').then(res => res.json()).catch(() => [])
-      ]).then(([notes, memories, timeline]) => {
-        if (notes.length > 0) setLatestNote(notes[0]);
-        if (memories.length > 0) setAllMemories(memories);
-        if (timeline.length > 0) setLatestTimeline(timeline[timeline.length - 1]);
-      });
-    }
-  }, [initialNotes.length, initialMemories.length, initialTimeline.length]);
+    Promise.all([
+      fetch('/api/notes').then(res => res.json()).catch(() => []),
+      fetch('/api/memories').then(res => res.json()).catch(() => []),
+      fetch('/api/timeline').then(res => res.json()).catch(() => [])
+    ]).then(([notes, memories, timeline]) => {
+      if (notes.length > 0) setLatestNote(notes[0]);
+      if (memories.length > 0) setAllMemories(memories);
+      if (timeline.length > 0) setLatestTimeline(timeline[timeline.length - 1]);
+    });
+  }, []);
 
   useEffect(() => {
     if (imageMemories.length <= 1) return;

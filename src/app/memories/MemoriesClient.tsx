@@ -10,6 +10,34 @@ interface MemoriesClientProps {
   initialMemories: Memory[];
 }
 
+function VideoPlayer({ memory }: { memory: Memory }) {
+  const [videoSrc, setVideoSrc] = useState<string | null>(memory.videoUrl || null);
+  const [loading, setLoading] = useState(!memory.videoUrl);
+
+  useEffect(() => {
+    if (!videoSrc) {
+      fetch(`/api/memories/${memory.id}/video`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.videoUrl) setVideoSrc(data.videoUrl);
+        })
+        .finally(() => setLoading(false));
+    }
+  }, [memory.id, videoSrc]);
+
+  if (loading) {
+    return <div className="w-full h-48 bg-slate-800 animate-pulse flex items-center justify-center text-white/50">Loading Video...</div>;
+  }
+
+  return (
+    <video 
+      src={videoSrc || ""} 
+      controls 
+      className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-700"
+    />
+  );
+}
+
 export default function MemoriesClient({ initialMemories }: MemoriesClientProps) {
   const [memories, setMemories] = useState<Memory[]>(initialMemories);
   const [loading, setLoading] = useState(false); // Default to false since we have initial data
@@ -121,12 +149,8 @@ export default function MemoriesClient({ initialMemories }: MemoriesClientProps)
               className="break-inside-avoid relative rounded-[2rem] overflow-hidden group border border-white/20 shadow-xl"
             >
               <div className="absolute inset-0 bg-slate-800 animate-pulse -z-10" />
-              {mem.type === "video" && mem.videoUrl ? (
-                <video 
-                  src={mem.videoUrl} 
-                  controls 
-                  className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-700"
-                />
+              {mem.type === "video" ? (
+                <VideoPlayer memory={mem} />
               ) : (
                 <img 
                   src={mem.imageUrl || ""} 

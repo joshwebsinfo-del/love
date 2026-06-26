@@ -5,9 +5,18 @@ import prisma from '@/lib/prisma';
 export async function GET(request: Request) {
   try {
     const memories = await prisma.memory.findMany({
-      include: { images: true },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        type: true,
+        imageUrl: true,
+        createdAt: true,
+        images: true, // we can still select relations
+        // NOTICE: videoUrl is intentionally omitted!
+      },
       orderBy: { createdAt: 'desc' },
-      take: 20, // Limit API payload to prevent 502 Gateway timeout from huge base64 strings
+      take: 20, 
     });
     return NextResponse.json(memories);
   } catch (error) {
